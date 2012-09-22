@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Pebbles - Node.js database</title>
+<link rel="canonical" href="http://puddles.webcrumpet.com" />
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script>
+	var halfwindow = [window.innerHeight/2,window.innerWidth];
+	var poop = 0;
+	$(document).ready(function() {
+		$('.container').css({marginTop: halfwindow[0]/2-100, marginLeft: halfwindow[1]/2-500});
+		$('.button:eq(1)').click(function() {
+			if (poop == 0) {
+				$('#aboutcontainer').animate({height: '190px', marginTop: '-50px'});
+				$(this).animate({height: '70px'});
+                $('.container').animate({marginTop: 50})
+				poop = 1;
+			}
+			else
+			{
+				$('#aboutcontainer').animate({height: '0px', marginTop: '0px'});
+				$(this).animate({height: '42px'});
+                $('.container').animate({marginTop: halfwindow[0]/2-100})
+				poop = 0;
+			}
+		});
+	});
+	
+</script>
+<style>
+body { font-family: Arial; margin: 0px; background: url(bg.png); }
+.container { width:920px; margin: auto; min-height:200px;  }
+.main { background: #4DA6FF; width: 700px;float: right;margin-top: -30px;padding-bottom: 0px;}
+#tagline {color: white;padding: 50px; padding-bottom: 10px;font-size: 40px; }
+#stripedown1 { position: absolute;width: 25px;height: 300px;background: #005BB7;z-index: -1;margin-left: 202px;margin-top: -50px; }
+#stripedown2 { position: absolute;width: 25px;height: 300px;background: #004182;z-index: -2;margin-left: 186px;margin-top: -25px; }
+.social {margin-left: 120px; width: 400px;height: 60px;background: #4DA6FF;position: absolute;margin-top: -100px;z-index: 1; padding-left: 400px;}
+#socialbox { height: 20px;background: white;margin: 10px; padding: 10px; }
+.logo { margin-left: 80px;width: 100px;z-index: 99;position: relative;} 
+iframe { float: left; }
+.button { font-family: Arial;margin: 10px 10px 10px 0;padding: 10px;background: #005EBD;color: white;font-size: 36px;float: right;border-radius: 10px; box-shadow: 0px 2px #003D79;}
+.button:hover { box-shadow: none; background:#003D79; cursor: pointer;  }
+#stripeside { position: absolute;width: 710px;height: 25px;background: #005BB7;z-index: -1;margin-left: 202px;margin-top: -50px; }
+#aboutcontainer {overflow: hidden; height: 0px; float:left; }
+#aboutcontent { margin: 20px;font-size: 24px; color: white;background: #005EBD;padding: 20px; }
+</style>
+</head>
+
+<body>
+<div class="container">
+	<div class="content">
+        <div class="head">
+        	<div class="logo"><img src="logo.png" /></div>
+        	<div class="social">
+            	<div id="socialbox">
+                <iframe style="margin-left: 20px; width: 80px; height: 20px;" src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.webcrumpet.com&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe>
+            	<a style="float: left;" href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+               	<div class="g-plusone" data-size="tall" data-annotation="none"></div>
+                </div>
+            </div>
+            <div id="stripeside"></div>
+        </div>
+        <div id="stripedown1"></div>
+        <div id="stripedown2"></div>
+        <div class="main">
+        	<div id="tagline">For quick and careless JSONified
+database for use with node.js</div>
+            <div id="buttons">
+            	<div class="button">
+                	<div id="about1"></div>
+                    <div id="about2">
+                    	<div id="buttontext">Download</div>
+                    </div>
+                </div>
+                <div class="button">
+                	<div id="about1"></div>
+                    <div id="about2">
+                    	<div id="buttontext">About</div>
+                    </div>
+                </div>
+            </div>
+            <div id="aboutcontainer">
+                <div id="aboutcontent">
+                Built on the powerful node.js platform which runs on v8, puddles bring the simplicity of javascript as the single means of transporting your user data back and forth between clients within your webapp.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
