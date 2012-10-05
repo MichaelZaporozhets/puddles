@@ -7,10 +7,10 @@ var ocean = {};
 function is_array(obj) {
    return (obj.constructor.toString().indexOf("Array") == -1)
 }
-function getmax(puddle) {
+function getmax(data) {
     var count = 0;
-    for (i in puddle.contents) {
-        if (puddle.contents.hasOwnProperty(i)) {
+    for (i in data) {
+        if (data.hasOwnProperty(i)) {
             count++;
         }
     }
@@ -37,36 +37,51 @@ function handlepuddles(type,data,puddle,row) {
             ocean[ puddle ] = {};
             ocean[ puddle ].config = {};
             ocean[ puddle ].config.fields = {};
+            ocean[ puddle ].config.general = {};
+            ocean[ puddle ].config.general.highest = 0;
             ocean[ puddle ].contents = {};
         }
             var puddle = ocean[ puddle ];
 
-            var count = getmax(puddle);
-            if (typeof puddle.contents[0] == 'undefined')
+            var count = getmax( puddle.contents[ data ] );
+            if (typeof puddle.contents[ data ] == 'undefined')
             {
-                puddle.contents[0] = [];
+                puddle.contents[ data ] = {};
+                puddle.config.fields[ data ] = {};
 
-            } else {
-                puddle.contents[ count++ ] = [];
             }
 
-            if (typeof puddle.config.fields[ data ] == 'undefined')
+            if (typeof puddle.contents[ data ][0] == 'undefined')
             {
-                puddle.contents[getmax(puddle)-1].push(row);
-                puddle.config.fields[ data ] = [];
-
-
-                for (i=0;i<getmax(puddle);i++) {
-                    if(puddle.contents[i].length < getmax(puddle.config.fields)) {
-                        puddle.contents[i].push(null);
+                var placeholdercount = 0;
+                for (i in puddle.config.fields) {
+                    if(puddle.contents[ i ] !== puddle.contents[ data ]) {
+                        puddle.contents[ i ]["//ADD PLACEHOLDERS FOR MISSING DATA//"] = {};
                     }
                 }
+                var count = getmax( puddle.contents[ data ] )
 
+                puddle.contents[ data ][ count ] = row;
 
 
             } else {
-                puddle.contents[getmax(puddle)-1].push(row);
+
+                puddle.contents[ data ][ count++ ] = row;
             }
+            console.log("The size of " + data + " is " + getmax( puddle.contents[ data ] ));
+            if (puddle.config.general.highest < getmax( puddle.contents[ data ] )) {
+                
+            }
+
+            var count = -1;
+            var find;
+            for (i in puddle.contents) {
+                if (getmax( puddle.contents[ i ] ) > count) {
+                    count = getmax( puddle.contents[ i ] );
+                }
+            }
+            console.log("The largest field has " + count + " entries.")
+
             return true;
     }
 }
@@ -117,8 +132,7 @@ function checkurl(pathname,response,request) {
     var testgetusers = new RegExp('^/');
     if(testgetusers.test(pathname)) {
         response.writeHead(200, { 'Content-type': 'text/html; charset=utf-8' });
-        response.end("<script> console.dir(JSON.parse('"+JSON.stringify(ocean)+"')) </script>" + JSON.stringify(ocean) );
-        console.log(JSON.stringify(ocean))   
+        response.end("<script> console.dir(JSON.parse('"+JSON.stringify(ocean)+"')) </script>" + JSON.stringify(ocean) );  
     }
 }
 
