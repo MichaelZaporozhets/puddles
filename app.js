@@ -1,10 +1,6 @@
-var http = require('http');
-var url = require('url');
-var fs = require('fs');
-var qs = require('querystring');
+var http = require('http'), url = require('url'), fs = require('fs'), qs = require('querystring');
 var ocean = {}; 
-var authkey;
-var authed = false;
+var authkey, authed = false, authip;
 var currentmaxfield = 0;
 
 function is_array(obj) {
@@ -54,9 +50,7 @@ function handlepuddles(type,data,puddle,row) {
         {
             for (i in puddle.config.fields) {
                 if(puddle.contents[ i ] == puddle.contents[ data ]) {
-                    for (a=0;a<currentmaxfield;a++) {
-                        puddle.contents[ i ][ a ] = null;
-                    }
+                    for (a=0;a<currentmaxfield;a++) { puddle.contents[ i ][ a ] = null; }
                 }
             }
             var count = getmax( puddle.contents[ data ] )
@@ -64,43 +58,35 @@ function handlepuddles(type,data,puddle,row) {
         } else {
             puddle.contents[ data ][ count++ ] = row;
         }
-        console.log("The size of " + data + " is " + getmax( puddle.contents[ data ] ));
-        if (puddle.config.general.highest < getmax( puddle.contents[ data ] )) {
-
-        }
         count = 0;
         max = 0;
         for (i in puddle.contents) { 
-            for (j in puddle.contents[i]) {
-                max++;
-            }
-            if (count < max) {
-                count = max;
-            }
+            for (j in puddle.contents[i]) { max++; }
+            if (count < max) { count = max; }
             max = 0;
         }
         currentmaxfield = count;
-        console.log("The largest field has " + count + " entries.")
         return true;
     }
 }
 function errormsg() {
     return "something broke :c";
 }
-function checkauth() {
-    if (authed == true) { return true; } else { return false; }
+function checkauth(request) {
+    if (authed == true && request.connection.remoteAddress == authip) { return true; } else { return false; }
 }
 function handlethings(pathname,response,request) {
     var testnewpuddle = new RegExp('^/authenticate/?');
     if(testnewpuddle.test(pathname)) {
-        if (checkauth() == false) {
+        if (checkauth(request) == false) {
             response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
             authrequest = decodeURI(pathname.replace("/authenticate/",""));
             if (authrequest == authkey) {
-                response.end("Successfully authenticated user!")
                 authed = true;
+                authip = request.connection.remoteAddress;
+                response.end("Successfully authenticated user from ip address: " + authip)
             } else {
-                response.end(errormsg());
+                response.end("The key you have attempted to authenticate with is incorrect. Please try again.");
             }
         }
         else
@@ -111,7 +97,7 @@ function handlethings(pathname,response,request) {
     }
     var insertintopuddle = new RegExp('^/insertintopuddle/?');
     if(insertintopuddle.test(pathname)) {
-        if (checkauth()) {
+        if (checkauth(request)) {
             var rawstring = decodeURI(pathname.replace("/insertintopuddle/",""));
             var arr = rawstring.split(",");
             var puddleref = arr[0];
