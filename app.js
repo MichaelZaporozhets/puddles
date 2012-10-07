@@ -5,6 +5,7 @@ var qs = require('querystring');
 var ocean = {}; 
 var authkey;
 var authed = false;
+var currentmaxfield = 0;
 
 function is_array(obj) {
    return (obj.constructor.toString().indexOf("Array") == -1)
@@ -51,10 +52,11 @@ function handlepuddles(type,data,puddle,row) {
         }
         if (typeof puddle.contents[ data ][0] == 'undefined')
         {
-            var placeholdercount = 0;
             for (i in puddle.config.fields) {
-                if(puddle.contents[ i ] !== puddle.contents[ data ]) {
-                    puddle.contents[ i ]["//ADD PLACEHOLDERS FOR MISSING DATA//"] = {};
+                if(puddle.contents[ i ] == puddle.contents[ data ]) {
+                    for (a=0;a<currentmaxfield;a++) {
+                        puddle.contents[ i ][ a ] = null;
+                    }
                 }
             }
             var count = getmax( puddle.contents[ data ] )
@@ -66,13 +68,18 @@ function handlepuddles(type,data,puddle,row) {
         if (puddle.config.general.highest < getmax( puddle.contents[ data ] )) {
 
         }
-        var count = -1;
-        var find;
-        for (i in puddle.contents) {
-            if (getmax( puddle.contents[ i ] ) > count) {
-                count = getmax( puddle.contents[ i ] );
+        count = 0;
+        max = 0;
+        for (i in puddle.contents) { 
+            for (j in puddle.contents[i]) {
+                max++;
             }
+            if (count < max) {
+                count = max;
+            }
+            max = 0;
         }
+        currentmaxfield = count;
         console.log("The largest field has " + count + " entries.")
         return true;
     }
