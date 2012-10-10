@@ -1,8 +1,18 @@
 var http = require('http'), url = require('url'), fs = require('fs'), qs = require('querystring');
-var ocean = {}; 
-var authkey, authed = false, authip;
+var ocean = {};
+var authkey, authed = false, authip, authuser = {};
 var currentmaxfield = 0;
-
+fs.stat('users', function(err, stat) {
+    if(err == null) {
+        authuser = JSON.parse(fs.readFileSync('users'));
+        authed = true;
+    } else if(err.code == 'ENOENT') {
+        fs.writeFile('users', '[]');
+        posts = {};
+    } else {
+        console.log('Something weird happened: ', err.code);
+    }
+});
 function is_array(obj) {
    return (obj.constructor.toString().indexOf("Array") == -1)
 }
@@ -14,6 +24,12 @@ function getmax(data) {
         }
     }
     return count;
+}
+function getusers() {
+    var authuser = JSON.parse(fs.readFileSync('users'));
+    if (typeof authuser.username !== 'undefined') {
+        return true;
+    }
 }
 function handlepuddles(type,data,puddle,row) {
     if(type == "add") {
@@ -44,7 +60,6 @@ function handlepuddles(type,data,puddle,row) {
         {
             puddle.contents[ data ] = {};
             puddle.config.fields[ data ] = {};
-
         }
         if (typeof puddle.contents[ data ][0] == 'undefined')
         {
@@ -80,13 +95,20 @@ function handlethings(pathname,response,request) {
     if(testnewpuddle.test(pathname)) {
         if (checkauth(request) == false) {
             response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
-            authrequest = decodeURI(pathname.replace("/authenticate/",""));
-            if (authrequest == authkey) {
+            var authrequest = decodeURI(pathname.replace("/authenticate/",""));
+            var arr = authrequest.split(",");
+            if (typeof authuser.username == 'undefined' && authkey == arr[0]) {
                 authed = true;
+                authuser.username = arr[1];
+                authuser.password = arr[2];
+                fs.writeFile('users', JSON.stringify(authuser));
                 authip = request.connection.remoteAddress;
                 response.end("Successfully authenticated user from ip address: " + authip)
+            } else if (authed == true && typeof authuser.username !== 'undefined' && authuser.username == arr[1] && authuser.password == arr[2] ) {
+                authed = true;
+                response.end("Successfully authenticated with previous credentials");             
             } else {
-                response.end("The key you have attempted to authenticate with is incorrect. Please try again.");
+                response.end("The key or credentials you have attempted to authenticate with are incorrect. Please try again.");
             }
         }
         else
