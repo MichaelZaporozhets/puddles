@@ -88,7 +88,7 @@ function errormsg() {
     return "something broke :c";
 }
 function checkauth(request) {
-    if (authed == true && request.connection.remoteAddress == authip) { return true; } else { return false; }
+    if (authed == true) { return true; } else { return false; }
 }
 function handlethings(pathname,response,request) {
     var testnewpuddle = new RegExp('^/authenticate/?');
