@@ -12,7 +12,7 @@ fs.stat('users', function(err, stat) {
     } else {
         console.log('Something weird happened: ', err.code);
     }
-});
+});                                                                                                                                                                                                                                                                                                                                                                                                       
 function is_array(obj) {
    return (obj.constructor.toString().indexOf("Array") == -1)
 }
