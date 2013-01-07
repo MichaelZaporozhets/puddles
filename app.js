@@ -6,13 +6,14 @@ fs.stat('users', function(err, stat) {
     if(err == null) {
         authuser = JSON.parse(fs.readFileSync('users'));
         authed = true;
+        console.log("Welcome back " + authuser.username + "! I read your backed up credentials and snuck them into the database ;)")
     } else if(err.code == 'ENOENT') {
         fs.writeFile('users', '[]');
-        posts = {};
+        authuser = {};
     } else {
         console.log('Something weird happened: ', err.code);
     }
-});                                                                                                                                                                                                                                                                                                                                                                                                       
+});                                                                                                                                                                                                                                                                                                                                                     
 function is_array(obj) {
    return (obj.constructor.toString().indexOf("Array") == -1)
 }
@@ -53,6 +54,7 @@ function handlepuddles(type,data,puddle,row) {
             ocean[ puddle ].config.general = {};
             ocean[ puddle ].config.general.highest = 0;
             ocean[ puddle ].contents = {};
+            // idk if it's worth siplifying the redundant code in this to something like local.config, etc 
         }
         var puddle = ocean[ puddle ];
         var count = getmax( puddle.contents[ data ] );
@@ -64,7 +66,11 @@ function handlepuddles(type,data,puddle,row) {
         if (typeof puddle.contents[ data ][0] == 'undefined')
         {
             for (i in puddle.config.fields) {
+                // check to see if stuff needs to be added
                 if(puddle.contents[ i ] == puddle.contents[ data ]) {
+                    //adds null entries to make 'rows' an actual thing
+                    // tbh i think this is way too hacky and there must be a better way of managing this issue.
+                    // Will research.
                     for (a=0;a<currentmaxfield;a++) { puddle.contents[ i ][ a ] = null; }
                 }
             }
@@ -83,9 +89,6 @@ function handlepuddles(type,data,puddle,row) {
         currentmaxfield = count;
         return true;
     }
-}
-function errormsg() {
-    return "something broke :c";
 }
 function checkauth(request) {
     if (authed == true) { return true; } else { return false; }
@@ -125,11 +128,22 @@ function handlethings(pathname,response,request) {
             var puddleref = arr[0];
             var field = arr[1];
             var row = arr[2];
-            response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
-            if (handlepuddles("insert",field,puddleref,row)) {
-                response.end("Successfully Added some data woo")
-            } else {
-                response.end(errormsg());
+            // Write in a more logical method of data insertion i.e sql type ( {insert} data {where} criteria == something);
+            // if(arr[1] == 'method = where')
+            //  "method = something" could be a sexy way of doing this depending on what kinds of methods and defaults i implement from here on in.
+            if (rawstring != '') {
+                if (handlepuddles("insert",field,puddleref,row)) {
+                    response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
+                    response.end("successfuly populated table: '"+arr[0]+"'' with a row ("+arr[1]+") and a field within that. ("+arr[2]+")")
+                } else {
+                    response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
+                    response.end('Unfortunately you did something dumb or wrong and your data was not added to the database.');
+                }
+            }
+            else
+            {
+                response.writeHead(200, {'Content-type': 'text/html; charset=utf-8'});
+                response.end(fs.readFileSync('views/insert.html'));
             }
         }
         else
@@ -142,7 +156,7 @@ function handlethings(pathname,response,request) {
     var testgetusers = new RegExp('^/');
     if(testgetusers.test(pathname)) {
         response.writeHead(200, { 'Content-type': 'text/html; charset=utf-8' });
-        response.end("<script> console.dir(JSON.parse('"+JSON.stringify(ocean)+"')) </script>" + JSON.stringify(ocean) );  
+        response.end(JSON.stringify(ocean));  
     }
 }
 var server = http.createServer(function(request, response) {

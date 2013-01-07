@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="jquery-1.7.1.min.js"></script>
+<script>
+$().ready(function() {
+
+});
+</script>
+<style>
+body { background: url(bg.png); margin: 0px; padding: 0px;}
+#container { width: 960px; height: 800px; margin: auto; }
+#header { height: 120px;background: #3A73CA; border-bottom: 5px solid #30416B	; }
+.logo { margin: 10px;height: 100px; }
+.nav .button { font-family: Arial;margin: 50px 20px 10px 0;padding: 10px;background: #005EBD;color: white;font-size: 26px;float: right;border-radius: 10px; box-shadow: 0px 2px #003D79; }
+.nav .button:hover { box-shadow: none; background:#003D79; cursor: pointer;}
+.nav { list-style: none;display: inline;margin: 0px;padding: 0px; }
+.nav li { display: inline; }
+</style>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<img src="logo.png" class="logo">
+			<ul class="nav">
+				<li><div class="button">Documentation</div></li>
+				<li><div class="button">Tools</div></li>
+				<li><div class="button">About</div></li>
+				<li><div class="button">Home</div></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div id="main">
+				<div id="selectdb">
+					
+				</div>
+			</div>
+			<div id="secondary"></div>
+			<div id="extend"></div>
+		</div>
+	</div>
+</body>
+</html>
